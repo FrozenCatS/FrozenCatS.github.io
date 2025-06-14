@@ -93,7 +93,7 @@
 <body>
   <div class="container">
     <h1>🎬 Film Rankings</h1>
-    <p style="text-align:center;">Fijne Vaderdag! Dit zijn alle films van mannenavond (ooit)</p>
+    <p style="text-align:center;">Fijne Vaderdag! Dit zijn topfilms voor een mannenavond 🍿</p>
 
     <div class="search">
       <input type="text" id="search-input" placeholder="Zoek op titel..." oninput="renderFilms()" />
@@ -101,8 +101,11 @@
 
     <div id="film-list"></div>
 
-    <h2>Gemaakt door Tex voor Papa </h2>
-
+    <h2>Gemaakt door Tex voor Papa 💙</h2>
+    <input id="new-title" placeholder="Filmtitel" />
+    <input id="new-rating" type="number" min="1" max="10" step="0.1" placeholder="Rating" />
+    <input id="new-img" placeholder="URL van poster" />
+    <button onclick="addFilm()">Toevoegen</button>
   </div>
 
   <script>
@@ -166,11 +169,19 @@
       });
     }
 
+    function addFilm() {
+      const title = document.getElementById('new-title').value;
+      const rating = document.getElementById('new-rating').value;
+      const img = document.getElementById('new-img').value;
 
       if (title && rating && img) {
         films.push({ title, rating: parseFloat(rating), img });
         renderFilms();
 
+        // Leegmaken
+        document.getElementById('new-title').value = '';
+        document.getElementById('new-rating').value = '';
+        document.getElementById('new-img').value = '';
       }
     }
 
