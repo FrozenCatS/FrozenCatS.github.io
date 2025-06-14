@@ -93,7 +93,7 @@
 <body>
   <div class="container">
     <h1>🎬 Film Rankings</h1>
-    <p style="text-align:center;">Fijne Vaderdag dit zijn mannenavond films!</p>
+    <p style="text-align:center;">Fijne Vaderdag! Dit zijn topfilms voor een mannenavond 🍿</p>
 
     <div class="search">
       <input type="text" id="search-input" placeholder="Zoek op titel..." oninput="renderFilms()" />
@@ -101,7 +101,7 @@
 
     <div id="film-list"></div>
 
-    <h2>Gemaakt door Tex voor Papa</h2>
+    <h2>Gemaakt door Tex voor Papa 💙</h2>
     <input id="new-title" placeholder="Filmtitel" />
     <input id="new-rating" type="number" min="1" max="10" step="0.1" placeholder="Rating" />
     <input id="new-img" placeholder="URL van poster" />
@@ -109,64 +109,56 @@
   </div>
 
   <script>
-let films = [
-  { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
-  { title: "The Godfather", rating: 9.2, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" },
-  { title: "The Dark Knight", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/8/8a/Dark_Knight.jpg" },
-  { title: "The Godfather Part II", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/0/03/Godfather_part_ii.jpg" },
-  { title: "12 Angry Men", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/9/91/12_angry_men.jpg" },
-  { title: "Schindler's List", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg" },
-  { title: "The Lord of the Rings: The Return of the King", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/9/9d/ReturnoftheKingCover.jpg" },
-  { title: "Pulp Fiction", rating: 8.9, img: "https://upload.wikimedia.org/wikipedia/en/8/82/Pulp_Fiction_cover.jpg" },
-  { title: "The Lord of the Rings: The Fellowship of the Ring", rating: 8.9, img: "https://upload.wikimedia.org/wikipedia/en/0/0c/Fellowship_of_the_Ring_UK_poster.jpg" },
-  { title: "The Lord of the Rings: The Two Towers", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/a/ad/The_Two_Towers.jpg" },
-  { title: "Forrest Gump", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg" },
-  { title: "Fight Club", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" },
-  { title: "Inception", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg" },
-  { title: "Star Wars: Episode V – The Empire Strikes Back", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/3/3c/SW_-_Empire_Strikes_Back.jpg" },
-  { title: "The Matrix", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg" },
-  { title: "Se7en", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/6/68/Seven_movie.jpg" },
-  { title: "One Flew Over the Cuckoo's Nest", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/7/76/One_Flew_Over_the_Cuckoo%27s_Nest.jpg" },
-  { title: "Goodfellas", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg" },
-  { title: "The Silence of the Lambs", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/8/86/The_Silence_of_the_Lambs_poster.jpg" },
-  { title: "City of God", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/1/1a/Cidade_de_Deus.jpg" },
-  { title: "It's a Wonderful Life", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/3/31/Its_A_Wonderful_Life_poster.jpg" },
-  { title: "Seven Samurai", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/5/58/Shichinin_no_samurai_movie_poster.jpg" },
-  { title: "The Silence of the Lambs", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/8/86/The_Silence_of_the_Lambs_poster.jpg" },
-  { title: "Saving Private Ryan", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg" },
-  { title: "Interstellar", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg" },
-  { title: "City of God", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/1/1a/Cidade_de_Deus.jpg" },
-  { title: "Life Is Beautiful", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/7/7d/La_Vita_%C3%A8_Bella.jpg" },
-  { title: "The Green Mile", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/c/ce/Green_mile.jpg" },
-  { title: "Star Wars: Episode IV – A New Hope", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/8/87/StarWarsMoviePoster1977.jpg" },
-  { title: "Terminator 2: Judgment Day", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/8/85/T2poster.jpg" },
-  { title: "Oppenheimer", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/b/b5/Oppenheimer_poster.jpg" },
-  { title: "Back to the Future", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/d/d2/Back_to_the_Future.jpg" },
-  { title: "Spirited Away", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/3/30/Spirited_Away_poster.JPG" },
-  { title: "The Pianist", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/8/84/The_Pianist_Poster.jpg" },
-  { title: "Psycho", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/9/9f/Psycho_%281960%29_theatrical_poster.jpg" },
-  { title: "Parasite", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/5/53/Parasite_%282019_film%29.png" },
-  { title: "Léon: The Professional", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/c/c0/Léon_The_Professional.jpg" },
-  { title: "The Lion King", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/3/3d/The_Lion_King_poster.jpg" },
-  { title: "Gladiator", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/8/8d/Gladiator_ver1.jpg" },
-  { title: "American History X", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/4/45/American_History_X_poster.jpg" }
-];
-
+    let films = [
+      { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
+      { title: "The Godfather", rating: 9.2, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" },
+      { title: "The Dark Knight", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/8/8a/Dark_Knight.jpg" },
+      { title: "The Godfather Part II", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/0/03/Godfather_part_ii.jpg" },
+      { title: "12 Angry Men", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/9/91/12_angry_men.jpg" },
+      { title: "Schindler's List", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg" },
+      { title: "The Lord of the Rings: The Return of the King", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/9/9d/ReturnoftheKingCover.jpg" },
+      { title: "Pulp Fiction", rating: 8.9, img: "https://upload.wikimedia.org/wikipedia/en/8/82/Pulp_Fiction_cover.jpg" },
+      { title: "Inception", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg" },
+      { title: "Fight Club", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" },
+      { title: "Forrest Gump", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg" },
+      { title: "The Matrix", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg" },
+      { title: "Goodfellas", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg" },
+      { title: "One Flew Over the Cuckoo's Nest", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/7/76/One_Flew_Over_the_Cuckoo%27s_Nest.jpg" },
+      { title: "Se7en", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/6/68/Seven_movie.jpg" },
+      { title: "City of God", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/1/1a/Cidade_de_Deus.jpg" },
+      { title: "Saving Private Ryan", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg" },
+      { title: "Life Is Beautiful", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/7/7d/La_Vita_%C3%A8_Bella.jpg" },
+      { title: "The Green Mile", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/c/ce/Green_mile.jpg" },
+      { title: "The Lion King", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/3/3d/The_Lion_King_poster.jpg" },
+      { title: "Gladiator", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/8/8d/Gladiator_ver1.jpg" },
+      { title: "Oppenheimer", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/b/b5/Oppenheimer_poster.jpg" },
+      { title: "American History X", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/4/45/American_History_X_poster.jpg" },
+      { title: "Back to the Future", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/d/d2/Back_to_the_Future.jpg" },
+      { title: "Léon: The Professional", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/c/c0/Léon_The_Professional.jpg" },
+      { title: "Spirited Away", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/3/30/Spirited_Away_poster.JPG" }
+    ];
 
     function renderFilms() {
       const list = document.getElementById('film-list');
       const searchValue = document.getElementById('search-input').value.toLowerCase();
-
-      // Sorteer op rating (hoog naar laag)
-      const sorted = films
-        .filter(film => film.title.toLowerCase().includes(searchValue))
-        .sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
-
       list.innerHTML = '';
-      sorted.forEach((film, i) => {
+
+      // Stap 1: sorteer alles
+      const sortedAll = [...films].sort((a, b) => b.rating - a.rating);
+
+      // Stap 2: voeg ranking toe
+      const withRank = sortedAll.map((film, index) => ({ ...film, rank: index + 1 }));
+
+      // Stap 3: filter op zoekterm
+      const filtered = withRank.filter(film =>
+        film.title.toLowerCase().includes(searchValue)
+      );
+
+      // Stap 4: toon films
+      filtered.forEach(film => {
         list.innerHTML += `
           <div class="film">
-            <div class="rank-number">#${i + 1}</div>
+            <div class="rank-number">#${film.rank}</div>
             <img src="${film.img}" alt="${film.title}">
             <div class="film-details">
               <div class="film-title">${film.title}</div>
