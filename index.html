@@ -112,16 +112,16 @@
 let films = [
   { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
   { title: "The Godfather", rating: 9.2, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" },
-  { title: "The Dark Knight", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/8/8a/Dark_Knight.jpg" },
+  { title: "The Dark Knight", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg" },
   { title: "The Godfather Part II", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/0/03/Godfather_part_ii.jpg" },
   { title: "Schindler's List", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg" },
-  { title: "Pulp Fiction", rating: 8.9, img: "https://upload.wikimedia.org/wikipedia/en/8/82/Pulp_Fiction_cover.jpg" },
+  { title: "Pulp Fiction", rating: 8.9, img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg" },
   { title: "The Good, the Bad and the Ugly", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/4/45/Good_the_bad_and_the_ugly_poster.jpg" },
   { title: "Fight Club", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" },
   { title: "Forrest Gump", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg" },
-  { title: "The Matrix", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg" },
+  { title: "The Matrix", rating: 8.7, img: "https://m.media-amazon.com/images/I/613ypTLZHsL.jpg },
   { title: "Goodfellas", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg" },
-  { title: "Se7en", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/6/68/Seven_movie.jpg" },
+  { title: "Se7en", rating: 8.6, img: "https://m.media-amazon.com/images/M/MV5BY2IzNzMxZjctZjUxZi00YzAxLTk3ZjMtODFjODdhMDU5NDM1XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
   { title: "City of God", rating: 8.6, img: "https://upload.wikimedia.org/wikipedia/en/1/1a/Cidade_de_Deus.jpg" },
   { title: "The Prestige", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/d/d2/Prestige_poster.jpg" },
   { title: "The Usual Suspects", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/9/9c/Usual_suspects_ver1.jpg" },
@@ -130,7 +130,7 @@ let films = [
   { title: "Django Unchained", rating: 8.4, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/Django_Unchained_Poster.jpg" },
   { title: "Oldboy", rating: 8.4, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Oldboykoreanposter.jpg" },
   { title: "Inglourious Basterds", rating: 8.3, img: "https://upload.wikimedia.org/wikipedia/en/c/c3/Inglourious_Basterds_poster.jpg" },
-  { title: "Rocky", rating: 9.5, img: "https://upload.wikimedia.org/wikipedia/en/1/15/Rocky_poster.jpg" },
+  { title: "Rocky", rating: 9.5, img: "https://media.s-bol.com/NYkVwk94B5EL/801x1200.jpg" },
   { title: "Rambo", rating: 7.0, img: "https://upload.wikimedia.org/wikipedia/en/8/82/Rambo_movie_poster.jpg" },
   { title: "Kill Bill", rating: 8.1, img: "https://upload.wikimedia.org/wikipedia/en/c/cf/Kill_bill_vol_one_poster.jpg" },
   { title: "Death Proof", rating: 7.0, img: "https://upload.wikimedia.org/wikipedia/en/1/1e/Death_Proof_poster.jpg" },
@@ -147,13 +147,13 @@ let films = [
       const searchValue = document.getElementById('search-input').value.toLowerCase();
       list.innerHTML = '';
 
-      // Stap 1: sorteer alles
+      //sorteer
       const sortedAll = [...films].sort((a, b) => b.rating - a.rating);
 
-      // Stap 2: voeg ranking toe
+      // rank
       const withRank = sortedAll.map((film, index) => ({ ...film, rank: index + 1 }));
 
-      // Stap 3: filter op zoekterm
+      // zoek
       const filtered = withRank.filter(film =>
         film.title.toLowerCase().includes(searchValue)
       );
@@ -182,7 +182,6 @@ let films = [
         films.push({ title, rating: parseFloat(rating), img });
         renderFilms();
 
-        // Leegmaken
         document.getElementById('new-title').value = '';
         document.getElementById('new-rating').value = '';
         document.getElementById('new-img').value = '';
