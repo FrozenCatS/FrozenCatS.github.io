@@ -22,6 +22,19 @@
       margin: 0 auto;
     }
 
+    .search {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      width: 60%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+    }
+
     .film {
       background: white;
       border-radius: 12px;
@@ -52,13 +65,19 @@
       color: #888;
     }
 
-    input {
+    .rank-number {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      color: #444;
+    }
+
+    input, button {
       padding: 0.5rem;
       margin: 0.2rem;
     }
 
     button {
-      padding: 0.5rem 1rem;
       background: #007bff;
       color: white;
       border: none;
@@ -73,20 +92,24 @@
 </head>
 <body>
   <div class="container">
-    <h1>🎬 Onze Film Rankings</h1>
-    <p style="text-align:center;">Fijne Vaderdag! Deze site is speciaal voor onze filmavondjes samen. ❤️</p>
+    <h1>🎬 Film Rankings</h1>
+    <p style="text-align:center;">Fijne Vaderdag dit zijn mannenavond films!</p>
+
+    <div class="search">
+      <input type="text" id="search-input" placeholder="Zoek op titel..." oninput="renderFilms()" />
+    </div>
 
     <div id="film-list"></div>
 
-    <h2>➕ Voeg een film toe</h2>
+    <h2>Gemaakt door Tex voor Papa</h2>
     <input id="new-title" placeholder="Filmtitel" />
-    <input id="new-rating" type="number" min="1" max="10" placeholder="Rating" />
+    <input id="new-rating" type="number" min="1" max="10" step="0.1" placeholder="Rating" />
     <input id="new-img" placeholder="URL van poster" />
     <button onclick="addFilm()">Toevoegen</button>
   </div>
 
   <script>
-    let films = [
+let films = [
   { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
   { title: "The Godfather", rating: 9.2, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" },
   { title: "The Dark Knight", rating: 9.0, img: "https://upload.wikimedia.org/wikipedia/en/8/8a/Dark_Knight.jpg" },
@@ -130,18 +153,24 @@
 ];
 
 
-
     function renderFilms() {
       const list = document.getElementById('film-list');
+      const searchValue = document.getElementById('search-input').value.toLowerCase();
+
+      // Sorteer op rating (hoog naar laag)
+      const sorted = films
+        .filter(film => film.title.toLowerCase().includes(searchValue))
+        .sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+
       list.innerHTML = '';
-      films.forEach((film, i) => {
+      sorted.forEach((film, i) => {
         list.innerHTML += `
           <div class="film">
+            <div class="rank-number">#${i + 1}</div>
             <img src="${film.img}" alt="${film.title}">
             <div class="film-details">
               <div class="film-title">${film.title}</div>
               <div class="rating">Rating: ${film.rating}/10</div>
-              <button onclick="removeFilm(${i})">❌ Verwijderen</button>
             </div>
           </div>
         `;
@@ -152,18 +181,16 @@
       const title = document.getElementById('new-title').value;
       const rating = document.getElementById('new-rating').value;
       const img = document.getElementById('new-img').value;
+
       if (title && rating && img) {
-        films.push({ title, rating, img });
+        films.push({ title, rating: parseFloat(rating), img });
         renderFilms();
+
+        // Leegmaken
         document.getElementById('new-title').value = '';
         document.getElementById('new-rating').value = '';
         document.getElementById('new-img').value = '';
       }
-    }
-
-    function removeFilm(index) {
-      films.splice(index, 1);
-      renderFilms();
     }
 
     renderFilms();
