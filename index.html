@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mannenavond 🎬</title>
   <style>
+    /* Same CSS as you provided, shortened here for brevity */
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f0f0f0;
@@ -75,15 +76,11 @@
     button:hover {
       background: #0056b3;
     }
-    .dev-tools {
+    .dev-tools, .rate-tools {
       display: none;
       flex-direction: column;
       align-items: center;
-    }
-    .rate-tools {
-      display: none;
-      flex-direction: column;
-      align-items: center;
+      margin-top: 2rem;
     }
     .img-url {
       display: none;
@@ -198,6 +195,21 @@
       { title: "Scarface", rating: 8, img: "https://upload.wikimedia.org/wikipedia/en/7/71/Scarface_-_1983_film.jpg" }
     ];
 
+    function handleSearch() {
+      const value = document.getElementById('search-input').value.toLowerCase();
+      if (value === 'devmode') {
+        devMode = true;
+        rateMode = false;
+        document.getElementById('dev-tools').style.display = 'flex';
+        document.getElementById('rate-tools').style.display = 'none';
+        document.body.classList.add('devmode');
+        document.body.classList.remove('ratemode');
+      } else if (value === 'ratemode') {
+        enableRateMode();
+      }
+      renderFilms(value);
+    }
+
     function enableRateMode() {
       rateMode = true;
       devMode = false;
@@ -223,28 +235,12 @@
       return titleToRank;
     }
 
-    function handleSearch() {
-      const value = document.getElementById('search-input').value.toLowerCase();
-      if (value === 'devmode') {
-        devMode = true;
-        rateMode = false;
-        document.getElementById('dev-tools').style.display = 'flex';
-        document.body.classList.add('devmode');
-        document.body.classList.remove('ratemode');
-      } else if (value === 'ratemode') {
-        enableRateMode();
-      }
-      renderFilms(value);
-    }
-
     function renderFilms(search = '') {
       const container = document.getElementById('film-list');
       container.innerHTML = '';
-
       const titleToRank = getLeaderboardRanks();
       const sorted = films.map((f, i) => ({ ...f, originalIndex: i })).sort((a, b) => b.rating - a.rating);
       const filtered = sorted.filter(f => f.title.toLowerCase().includes(search));
-
       filtered.forEach(film => {
         container.innerHTML += `
           <div class="film">
@@ -254,19 +250,18 @@
               <div class="film-title" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'title', this.innerText)">${film.title}</div>
               <div class="rating">Rating: <span class="rating-value" contenteditable="${devMode || rateMode}" onblur="updateField(${film.originalIndex}, 'rating', this.innerText)">${film.rating}</span></div>
               <div class="img-url" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'img', this.innerText)">${film.img}</div>
-              ${devMode ? `<button onclick="deleteFilm(${film.originalIndex})">🗑️ Verwijder</button>` : ''}
             </div>
-          </div>
-        `;
+          </div>`;
       });
     }
 
     function updateField(index, field, value) {
       if (field === 'rating') {
-        value = parseFloat(value);
-        if (isNaN(value)) return;
+        const num = parseFloat(value);
+        if (!isNaN(num)) films[index][field] = num;
+      } else {
+        films[index][field] = value.trim();
       }
-      films[index][field] = value;
       renderFilms(document.getElementById('search-input').value.toLowerCase());
     }
 
@@ -274,32 +269,28 @@
       const title = document.getElementById('new-title').value.trim();
       const rating = parseFloat(document.getElementById('new-rating').value);
       const img = document.getElementById('new-img').value.trim();
-
-      if (!title || isNaN(rating) || !img) return;
-
-      films.push({ title, rating, img });
-      renderFilms('');
+      if (title && !isNaN(rating) && img) {
+        films.push({ title, rating, img });
+        renderFilms();
+        document.getElementById('new-title').value = '';
+        document.getElementById('new-rating').value = '';
+        document.getElementById('new-img').value = '';
+      }
     }
 
-    function deleteFilm(index) {
-      films.splice(index, 1);
-      renderFilms(document.getElementById('search-input').value.toLowerCase());
-    }
+function exportData() {
+  const formatted = films.map(f => {
+    return `  { title: "${f.title}", rating: ${f.rating}, img: "${f.img}" },`;
+  }).join('\n');
 
-    // NEW EXPORT FUNCTION: triggers a download instead of logging to console
-    function exportData() {
-      const dataStr = JSON.stringify(films, null, 2);
-      const blob = new Blob([dataStr], { type: "application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "film_rankings.json";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
-    }
+  const blob = new Blob([formatted], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'films.txt';
+  a.click();
+}
 
-    // Initial render
+
     renderFilms();
   </script>
 </body>
