@@ -80,6 +80,11 @@
       flex-direction: column;
       align-items: center;
     }
+    .rate-tools {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
     .img-url {
       display: none;
     }
@@ -132,6 +137,11 @@
       <button onclick="exportData()">Exporteren</button>
     </div>
     <h2>Gemaakt door Tex voor Papa</h2>
+  </div>
+      <div class="rate-tools" id="rate-tools">
+      <h2>Rate Mode</h2>
+      <button onclick="exportData()">Exporteren</button>
+    </div>
   </div>
 
   <script>
@@ -193,8 +203,9 @@
       rateMode = true;
       devMode = false;
       document.getElementById('dev-tools').style.display = 'none';
-      document.body.classList.remove('devmode');
+      document.getElementById('rate-tools').style.display = 'flex';
       document.body.classList.add('ratemode');
+      document.body.classList.remove('devmode');
       renderFilms(document.getElementById('search-input').value.toLowerCase());
     }
 
