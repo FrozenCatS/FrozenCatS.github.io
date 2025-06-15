@@ -138,10 +138,9 @@
     </div>
     <h2>Gemaakt door Tex voor Papa</h2>
   </div>
-      <div class="rate-tools" id="rate-tools">
-      <h2>Rate Mode</h2>
-      <button onclick="exportData()">Exporteren</button>
-    </div>
+  <div class="rate-tools" id="rate-tools">
+    <h2>Rate Mode</h2>
+    <button onclick="exportData()">Exporteren</button>
   </div>
 
   <script>
@@ -156,7 +155,7 @@
       { title: "Schindler's List", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg" },
       { title: "Pulp Fiction", rating: 8.9, img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg" },
       { title: "The Good, the Bad and the Ugly", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/4/45/Good_the_bad_and_the_ugly_poster.jpg" },
-      { title: "Fight Club", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" },
+      { title: "Fight Club", rating: 8.8, img: "https://upload.wikedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" },
       { title: "Forrest Gump", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg" },
       { title: "The Matrix", rating: 8.7, img: "https://m.media-amazon.com/images/I/613ypTLZHsL.jpg" },
       { title: "Goodfellas", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg" },
@@ -196,7 +195,7 @@
       { title: "8 Mile", rating: 6, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/Eight_mile_ver2.jpg" },
       { title: "Top Gun", rating: 6, img: "https://m.media-amazon.com/images/I/71JXK7v7pvL.jpg" },
       { title: "Papillon", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BN2RkNTU2YmUtNGJmNy00YTAzLWE2MjMtOTVkYWU5NzY3M2ViXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-      { title: "Scarface", rating: 8, img: "https://upload.wikimedia.org/wikipedia/en/7/71/Scarface_-_1983_film.jpg" },
+      { title: "Scarface", rating: 8, img: "https://upload.wikimedia.org/wikipedia/en/7/71/Scarface_-_1983_film.jpg" }
     ];
 
     function enableRateMode() {
@@ -287,9 +286,17 @@
       renderFilms(document.getElementById('search-input').value.toLowerCase());
     }
 
+    // NEW EXPORT FUNCTION: triggers a download instead of logging to console
     function exportData() {
-      console.log(JSON.stringify(films, null, 2));
-      alert("Check de console (F12) voor de geëxporteerde data.");
+      const dataStr = JSON.stringify(films, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "film_rankings.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
     }
 
     // Initial render
