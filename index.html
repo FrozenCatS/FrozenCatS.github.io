@@ -11,22 +11,18 @@
       margin: 0;
       padding: 2rem;
     }
-
     h1 {
       text-align: center;
       color: #333;
     }
-
     .container {
       max-width: 800px;
       margin: 0 auto;
     }
-
     .search {
       text-align: center;
       margin-bottom: 1rem;
     }
-
     input[type="text"] {
       padding: 0.5rem;
       width: 60%;
@@ -34,7 +30,6 @@
       border: 1px solid #ccc;
       margin-bottom: 1rem;
     }
-
     .film {
       background: white;
       border-radius: 12px;
@@ -44,18 +39,56 @@
       display: flex;
       align-items: center;
     }
-
     .film img {
       width: 80px;
       height: auto;
       margin-right: 1rem;
       border-radius: 8px;
     }
-
     .film-details {
       flex-grow: 1;
     }
-
+    .film-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .rating {
+      color: #888;
+    }
+    .rank-number {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      color: #444;
+    }
+    input, button {
+      padding: 0.5rem;
+      margin: 0.2rem;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .dev-tools {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    .img-url {
+      display: none;
+    }
+    .devmode .img-url {
+      display: block;
+      color: #555;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
     /* Make editable backgrounds invisible by default */
     .film-title[contenteditable],
     .rating-value[contenteditable] {
@@ -65,7 +98,6 @@
       outline: none;
       cursor: default;
     }
-
     /* Show editable backgrounds only in devmode */
     .devmode .film-title[contenteditable],
     .devmode .rating-value[contenteditable] {
@@ -75,69 +107,16 @@
       cursor: text;
       outline: auto;
     }
-
-    .film-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    .rating {
-      color: #888;
-    }
-
-    .rank-number {
-      font-weight: bold;
-      font-size: 1.5rem;
-      margin-right: 1rem;
-      color: #444;
-    }
-
-    input, button {
-      padding: 0.5rem;
-      margin: 0.2rem;
-    }
-
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-
-    .dev-tools {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .img-url {
-      display: none;
-    }
-
-    .devmode .img-url {
-      display: block;
-      color: #555;
-      font-size: 0.9rem;
-      margin-top: 4px;
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎬 Film Rankings</h1>
     <p style="text-align:center;">Fijne Vaderdag! Dit zijn alle mannenavond films</p>
-
     <div class="search">
       <input type="text" id="search-input" placeholder="Zoek op titel..." oninput="handleSearch()" />
     </div>
-
     <div id="film-list"></div>
-
     <div class="dev-tools" id="dev-tools">
       <h2>Developer Mode</h2>
       <input id="new-title" placeholder="Filmtitel" />
@@ -146,61 +125,78 @@
       <button onclick="addFilm()">Toevoegen</button>
       <button onclick="exportData()">Exporteren</button>
     </div>
-
     <h2>Gemaakt door Tex voor Papa</h2>
   </div>
-
   <script>
     let devMode = false;
     let films = [
-  { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
-  { title: "The Godfather", rating: 9.2, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" },
-  { title: "The Dark Knight", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg" },
-  { title: "The Godfather Part II", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/0/03/Godfather_part_ii.jpg" },
-  { title: "Schindler's List", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg" },
-  { title: "Pulp Fiction", rating: 8.9, img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg" },
-  { title: "The Good, the Bad and the Ugly", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/4/45/Good_the_bad_and_the_ugly_poster.jpg" },
-  { title: "Fight Club", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" },
-  { title: "Forrest Gump", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg" },
-  { title: "The Matrix", rating: 8.7, img: "https://m.media-amazon.com/images/I/613ypTLZHsL.jpg" },
-  { title: "Goodfellas", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg" },
-  { title: "Se7en", rating: 8.6, img: "https://m.media-amazon.com/images/M/MV5BY2IzNzMxZjctZjUxZi00YzAxLTk3ZjMtODFjODdhMDU5NDM1XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-  { title: "City of God", rating: 8.6, img: "https://cdn.posteritati.com/posters/000/000/062/549/city-of-god-md-web.jpg" },
-  { title: "The Prestige", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/d/d2/Prestige_poster.jpg" },
-  { title: "The Usual Suspects", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/9/9c/Usual_suspects_ver1.jpg" },
-  { title: "Leon: The Professional", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/0/03/Leon-poster.jpg" },
-  { title: "Memento", rating: 8.4, img: "https://upload.wikimedia.org/wikipedia/en/c/c7/Memento_poster.jpg" },
-  { title: "Django Unchained", rating: 8.4, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/Django_Unchained_Poster.jpg" },
-  { title: "Oldboy", rating: 8.4, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Oldboykoreanposter.jpg" },
-  { title: "Inglourious Basterds", rating: 8.3, img: "https://upload.wikimedia.org/wikipedia/en/c/c3/Inglourious_Basterds_poster.jpg" },
-  { title: "Rocky", rating: 9.5, img: "https://media.s-bol.com/NYkVwk94B5EL/801x1200.jpg" },
-  { title: "Rambo", rating: 7, img: "https://m.media-amazon.com/images/M/MV5BNTNiMzUyZjQtY2RlOS00MjIxLWFlMjAtNjI1NjkzY2JjN2M3XkEyXkFqcGc@._V1_.jpg" },
-  { title: "Kill Bill", rating: 8.1, img: "https://m.media-amazon.com/images/M/MV5BZmMyYzJlZmYtY2I3NC00NjAyLTkyZWItZjdjZDI1YTYyYTEwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-  { title: "Death Proof", rating: 7, img: "https://m.media-amazon.com/images/M/MV5BYjRlOTM0OTktZTBjNi00ZjZiLWJkMzktMmU2ZDBkMTQxN2FmXkEyXkFqcGc@._V1_.jpg" },
-  { title: "The Hateful Eight", rating: 7.8, img: "https://m.media-amazon.com/images/M/MV5BMjA1MTc1NTg5NV5BMl5BanBnXkFtZTgwOTM2MDEzNzE@._V1_FMjpg_UX1000_.jpg" },
-  { title: "Once Upon a Time in Hollywood", rating: 7.6, img: "https://m.media-amazon.com/images/M/MV5BMzMzNmViNjYtN2ViNi00NDM3LWFlMmItNDYyMGIzY2EzZjE2XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-  { title: "Snatch", rating: 8.3, img: "https://m.media-amazon.com/images/M/MV5BYzk5NjJkMTQtN2IyNC00YWM5LTlhZmMtNGI3MWNhMTU1YTc4XkEyXkFqcGc@._V1_QL75_UY281_CR1,0,190,281_.jpg" },
-  { title: "Slumdog Millionaire", rating: 8, img: "https://m.media-amazon.com/images/M/MV5BMTE5ZTRkYWEtZmU5MC00NDJjLTk3NmUtZGJlYTM2MmQ3NTJkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-  { title: "La Haine", rating: 8.1, img: "https://upload.wikimedia.org/wikipedia/en/3/30/Haine.jpg" },
-  { title: "No Country for Old Men", rating: 8.2, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/No_Country_for_Old_Men_poster.jpg" },
-  { title: "Raging Bull", rating: 8.2, img: "https://m.media-amazon.com/images/M/MV5BMjlkYmYyZWQtNTZkOS00ZjA0LWEwNWUtNzE2ZGNiYjg0MjA2XkEyXkFqcGc@._V1_.jpg" },
-  { title: "Full Metal Jacket", rating: 8.3, img: "https://upload.wikimedia.org/wikipedia/en/9/99/Full_Metal_Jacket_poster.jpg" },
-  { title: "Platoon", rating: 8.1, img: "https://www.vprogids.nl/.imaging/mte/gids/opengraph/dam/cinema/12/24/37/image_12243708.jpeg/jcr:content/image_12243708.jpeg" },
-  { title: "Heat", rating: 8.3, img: "https://m.media-amazon.com/images/M/MV5BMTkxYjU1OTMtYWViZC00ZjAzLWI3MDktZGQ2N2VmMjVjNDRlXkEyXkFqcGc@._V1_QL75_UY281_CR3,0,190,281_.jpg" },
-  { title: "Fast and Furious", rating: 6.8, img: "https://m.media-amazon.com/images/I/71qtDoM-rcL._UF894,1000_QL80_.jpg" },
-  { title: "The Terminator", rating: 8.1, img: "https://upload.wikimedia.org/wikipedia/en/7/70/Terminator1984movieposter.jpg" },
-  { title: "The Big Lebowski", rating: 8.1, img: "https://m.media-amazon.com/images/M/MV5BNDQwMTAzOTkxNV5BMl5BanBnXkFtZTgwMjc0MTAwMjE@._V1_.jpg" },
-  { title: "The Rush", rating: 7.7, img: "https://m.media-amazon.com/images/M/MV5BMTZhOGQxM2ItNGQyYy00YzE5LWI5MjMtNmMzNGQzNDE1OTUzXkEyXkFqcGc@._V1_.jpg" },
-  { title: "Into the Wild", rating: 8.1, img: "https://m.media-amazon.com/images/S/pv-target-images/e0e27ea5a13ca436a17dcbe09d0bd39d50e3a8e71f4c5f674996d9aaaafbd3d4.jpg" },
-  { title: "Donnie Darko", rating: 8, img: "https://m.media-amazon.com/images/M/MV5BMWE3NTYzZmEtM2U5MS00MDZhLTk2ZTQtZTgzNjg0ZGQ5ZjM0XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-  { title: "Fear and Loathing in Las Vegas", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BNjFkNjdiZjUtNzUzNy00NWM5LWFlNDUtNTRiYmJiZWNiYjkwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-  { title: "Escape from Alcatraz", rating: 6, img: "https://musicart.xboxlive.com/7/57dd1000-0000-0000-0000-000000000002/504/image.jpg" },
-  { title: "Menace II Society", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BMzQ1MTNhZWEtM2FmZS00ZjkzLWJhZWEtNzA5ZDllZmYzNjQ1XkEyXkFqcGc@._V1_.jpg" },
-  { title: "Boyz n the Hood", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BYzZhNDcyYTctOWU1My00ZmUzLWFmNmItZTIwY2JkNjVkZTdmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-  { title: "8 Mile", rating: 6, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/Eight_mile_ver2.jpg" },
-  { title: "Top Gun", rating: 6, img: "https://m.media-amazon.com/images/I/71JXK7v7pvL.jpg" },
-  { title: "Papillon", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BN2RkNTU2YmUtNGJmNy00YTAzLWE2MjMtOTVkYWU5NzY3M2ViXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+      { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
+      { title: "The Godfather", rating: 9.2, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" },
+      { title: "The Dark Knight", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg" },
+      { title: "The Godfather Part II", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/0/03/Godfather_part_ii.jpg" },
+      { title: "Schindler's List", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg" },
+      { title: "Pulp Fiction", rating: 8.9, img: "https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg" },
+      { title: "The Good, the Bad and the Ugly", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/4/45/Good_the_bad_and_the_ugly_poster.jpg" },
+      { title: "Fight Club", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" },
+      { title: "Forrest Gump", rating: 8.8, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg" },
+      { title: "The Matrix", rating: 8.7, img: "https://m.media-amazon.com/images/I/613ypTLZHsL.jpg" },
+      { title: "Goodfellas", rating: 8.7, img: "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg" },
+      { title: "Se7en", rating: 8.6, img: "https://m.media-amazon.com/images/M/MV5BY2IzNzMxZjctZjUxZi00YzAxLTk3ZjMtODFjODdhMDU5NDM1XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+      { title: "City of God", rating: 8.6, img: "https://cdn.posteritati.com/posters/000/000/062/549/city-of-god-md-web.jpg" },
+      { title: "The Prestige", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/d/d2/Prestige_poster.jpg" },
+      { title: "The Usual Suspects", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/9/9c/Usual_suspects_ver1.jpg" },
+      { title: "Leon: The Professional", rating: 8.5, img: "https://upload.wikimedia.org/wikipedia/en/0/03/Leon-poster.jpg" },
+      { title: "Memento", rating: 8.4, img: "https://upload.wikimedia.org/wikipedia/en/c/c7/Memento_poster.jpg" },
+      { title: "Django Unchained", rating: 8.4, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/Django_Unchained_Poster.jpg" },
+      { title: "Oldboy", rating: 8.4, img: "https://upload.wikimedia.org/wikipedia/en/6/67/Oldboykoreanposter.jpg" },
+      { title: "Inglourious Basterds", rating: 8.3, img: "https://upload.wikimedia.org/wikipedia/en/c/c3/Inglourious_Basterds_poster.jpg" },
+      { title: "Rocky", rating: 9.5, img: "https://media.s-bol.com/NYkVwk94B5EL/801x1200.jpg" },
+      { title: "Rambo", rating: 7, img: "https://m.media-amazon.com/images/M/MV5BNTNiMzUyZjQtY2RlOS00MjIxLWFlMjAtNjI1NjkzY2JjN2M3XkEyXkFqcGc@._V1_.jpg" },
+      { title: "Kill Bill", rating: 8.1, img: "https://m.media-amazon.com/images/M/MV5BZmMyYzJlZmYtY2I3NC00NjAyLTkyZWItZjdjZDI1YTYyYTEwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+      { title: "Death Proof", rating: 7, img: "https://m.media-amazon.com/images/M/MV5BYjRlOTM0OTktZTBjNi00ZjZiLWJkMzktMmU2ZDBkMTQxN2FmXkEyXkFqcGc@._V1_.jpg" },
+      { title: "The Hateful Eight", rating: 7.8, img: "https://m.media-amazon.com/images/M/MV5BMjA1MTc1NTg5NV5BMl5BanBnXkFtZTgwOTM2MDEzNzE@._V1_FMjpg_UX1000_.jpg" },
+      { title: "Once Upon a Time in Hollywood", rating: 7.6, img: "https://m.media-amazon.com/images/M/MV5BMzMzNmViNjYtN2ViNi00NDM3LWFlMmItNDYyMGIzY2EzZjE2XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+      { title: "Snatch", rating: 8.3, img: "https://m.media-amazon.com/images/M/MV5BYzk5NjJkMTQtN2IyNC00YWM5LTlhZmMtNGI3MWNhMTU1YTc4XkEyXkFqcGc@._V1_QL75_UY281_CR1,0,190,281_.jpg" },
+      { title: "Slumdog Millionaire", rating: 8, img: "https://m.media-amazon.com/images/M/MV5BMTE5ZTRkYWEtZmU5MC00NDJjLTk3NmUtZGJlYTM2MmQ3NTJkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+      { title: "La Haine", rating: 8.1, img: "https://upload.wikimedia.org/wikipedia/en/3/30/Haine.jpg" },
+      { title: "No Country for Old Men", rating: 8.2, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/No_Country_for_Old_Men_poster.jpg" },
+      { title: "Raging Bull", rating: 8.2, img: "https://m.media-amazon.com/images/M/MV5BMjlkYmYyZWQtNTZkOS00ZjA0LWEwNWUtNzE2ZGNiYjg0MjA2XkEyXkFqcGc@._V1_.jpg" },
+      { title: "Full Metal Jacket", rating: 8.3, img: "https://upload.wikimedia.org/wikipedia/en/9/99/Full_Metal_Jacket_poster.jpg" },
+      { title: "Platoon", rating: 8.1, img: "https://www.vprogids.nl/.imaging/mte/gids/opengraph/dam/cinema/12/24/37/image_12243708.jpeg/jcr:content/image_12243708.jpeg" },
+      { title: "Heat", rating: 8.3, img: "https://m.media-amazon.com/images/M/MV5BMTkxYjU1OTMtYWViZC00ZjAzLWI3MDktZGQ2N2VmMjVjNDRlXkEyXkFqcGc@._V1_QL75_UY281_CR3,0,190,281_.jpg" },
+      { title: "Fast and Furious", rating: 6.8, img: "https://m.media-amazon.com/images/I/71qtDoM-rcL._UF894,1000_QL80_.jpg" },
+      { title: "The Terminator", rating: 8.1, img: "https://upload.wikimedia.org/wikipedia/en/7/70/Terminator1984movieposter.jpg" },
+      { title: "The Big Lebowski", rating: 8.1, img: "https://m.media-amazon.com/images/M/MV5BNDQwMTAzOTkxNV5BMl5BanBnXkFtZTgwMjc0MTAwMjE@._V1_.jpg" },
+      { title: "The Rush", rating: 7.7, img: "https://m.media-amazon.com/images/M/MV5BMTZhOGQxM2ItNGQyYy00YzE5LWI5MjMtNmMzNGQzNDE1OTUzXkEyXkFqcGc@._V1_.jpg" },
+      { title: "Into the Wild", rating: 8.1, img: "https://m.media-amazon.com/images/S/pv-target-images/e0e27ea5a13ca436a17dcbe09d0bd39d50e3a8e71f4c5f674996d9aaaafbd3d4.jpg" },
+      { title: "Donnie Darko", rating: 8, img: "https://m.media-amazon.com/images/M/MV5BMWE3NTYzZmEtM2U5MS00MDZhLTk2ZTQtZTgzNjg0ZGQ5ZjM0XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+      { title: "Fear and Loathing in Las Vegas", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BNjFkNjdiZjUtNzUzNy00NWM5LWFlNDUtNTRiYmJiZWNiYjkwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+      { title: "Escape from Alcatraz", rating: 6, img: "https://musicart.xboxlive.com/7/57dd1000-0000-0000-0000-000000000002/504/image.jpg" },
+      { title: "Menace II Society", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BMzQ1MTNhZWEtM2FmZS00ZjkzLWJhZWEtNzA5ZDllZmYzNjQ1XkEyXkFqcGc@._V1_.jpg" },
+      { title: "Boyz n the Hood", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BYzZhNDcyYTctOWU1My00ZmUzLWFmNmItZTIwY2JkNjVkZTdmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+      { title: "8 Mile", rating: 6, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/Eight_mile_ver2.jpg" },
+      { title: "Top Gun", rating: 6, img: "https://m.media-amazon.com/images/I/71JXK7v7pvL.jpg" },
+      { title: "Papillon", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BN2RkNTU2YmUtNGJmNy00YTAzLWE2MjMtOTVkYWU5NzY3M2ViXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
     ];
+
+    function getLeaderboardRanks() {
+      // Sort all films by rating descending, assign rank (ties get the same rank)
+      const sorted = films
+        .map((f, i) => ({ ...f, originalIndex: i }))
+        .sort((a, b) => b.rating - a.rating);
+
+      const titleToRank = {};
+      let rank = 1;
+      let prevRating = null;
+      sorted.forEach((film, i) => {
+        if (film.rating !== prevRating) {
+          rank = i + 1;
+          prevRating = film.rating;
+        }
+        titleToRank[film.title] = rank;
+      });
+      return titleToRank;
+    }
 
     function handleSearch() {
       const value = document.getElementById('search-input').value.toLowerCase();
@@ -215,15 +211,21 @@
     function renderFilms(search = '') {
       const container = document.getElementById('film-list');
       container.innerHTML = '';
-      const filtered = films
+
+      // Get leaderboard ranks (always by full list)
+      const titleToRank = getLeaderboardRanks();
+
+      // Always use full sorted list for filtering
+      const sorted = films
         .map((f, i) => ({ ...f, originalIndex: i }))
-        .filter(f => f.title.toLowerCase().includes(search))
         .sort((a, b) => b.rating - a.rating);
 
-      filtered.forEach((film, displayIndex) => {
+      const filtered = sorted.filter(f => f.title.toLowerCase().includes(search));
+
+      filtered.forEach(film => {
         container.innerHTML += `
           <div class="film">
-            <div class="rank-number">#${displayIndex + 1}</div>
+            <div class="rank-number">#${titleToRank[film.title]}</div>
             <img src="${film.img}" alt="${film.title}" />
             <div class="film-details">
               <div class="film-title" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'title', this.innerText)">${film.title}</div>
@@ -256,7 +258,6 @@
     }
 
     function deleteFilm(index) {
-      // Using UI confirm is disallowed, replaced with inline UI confirm modal alternative if needed.
       if (confirm('Weet je zeker dat je deze film wilt verwijderen?')) {
         films.splice(index, 1);
         renderFilms();
