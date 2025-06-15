@@ -89,7 +89,6 @@
       font-size: 0.9rem;
       margin-top: 4px;
     }
-    /* Make editable backgrounds invisible by default */
     .film-title[contenteditable],
     .rating-value[contenteditable] {
       background-color: transparent;
@@ -98,14 +97,21 @@
       outline: none;
       cursor: default;
     }
-    /* Show editable backgrounds only in devmode */
     .devmode .film-title[contenteditable],
-    .devmode .rating-value[contenteditable] {
+    .devmode .rating-value[contenteditable],
+    .devmode .img-url[contenteditable] {
       background-color: #eef;
       padding: 2px 4px;
       border-radius: 4px;
       cursor: text;
       outline: auto;
+    }
+    .ratemode .rating-value[contenteditable] {
+      background-color: #ffe;
+      padding: 2px 4px;
+      border-radius: 4px;
+      outline: auto;
+      cursor: text;
     }
   </style>
 </head>
@@ -127,10 +133,13 @@
     </div>
     <h2>Gemaakt door Tex voor Papa</h2>
   </div>
+
   <script>
     let devMode = false;
-    let films = [
-      { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
+    let rateMode = false;
+
+    const films = [
+     { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
       { title: "The Godfather", rating: 9.2, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" },
       { title: "The Dark Knight", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg" },
       { title: "The Godfather Part II", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/0/03/Godfather_part_ii.jpg" },
@@ -179,12 +188,17 @@
       { title: "Papillon", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BN2RkNTU2YmUtNGJmNy00YTAzLWE2MjMtOTVkYWU5NzY3M2ViXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
     ];
 
-    function getLeaderboardRanks() {
-      // Sort all films by rating descending, assign rank (ties get the same rank)
-      const sorted = films
-        .map((f, i) => ({ ...f, originalIndex: i }))
-        .sort((a, b) => b.rating - a.rating);
+    function enableRateMode() {
+      rateMode = true;
+      devMode = false;
+      document.getElementById('dev-tools').style.display = 'none';
+      document.body.classList.remove('devmode');
+      document.body.classList.add('ratemode');
+      renderFilms(document.getElementById('search-input').value.toLowerCase());
+    }
 
+    function getLeaderboardRanks() {
+      const sorted = films.map((f, i) => ({ ...f, originalIndex: i })).sort((a, b) => b.rating - a.rating);
       const titleToRank = {};
       let rank = 1;
       let prevRating = null;
@@ -202,8 +216,12 @@
       const value = document.getElementById('search-input').value.toLowerCase();
       if (value === 'devmode') {
         devMode = true;
+        rateMode = false;
         document.getElementById('dev-tools').style.display = 'flex';
         document.body.classList.add('devmode');
+        document.body.classList.remove('ratemode');
+      } else if (value === 'ratemode') {
+        enableRateMode();
       }
       renderFilms(value);
     }
@@ -212,14 +230,8 @@
       const container = document.getElementById('film-list');
       container.innerHTML = '';
 
-      // Get leaderboard ranks (always by full list)
       const titleToRank = getLeaderboardRanks();
-
-      // Always use full sorted list for filtering
-      const sorted = films
-        .map((f, i) => ({ ...f, originalIndex: i }))
-        .sort((a, b) => b.rating - a.rating);
-
+      const sorted = films.map((f, i) => ({ ...f, originalIndex: i })).sort((a, b) => b.rating - a.rating);
       const filtered = sorted.filter(f => f.title.toLowerCase().includes(search));
 
       filtered.forEach(film => {
@@ -229,7 +241,7 @@
             <img src="${film.img}" alt="${film.title}" />
             <div class="film-details">
               <div class="film-title" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'title', this.innerText)">${film.title}</div>
-              <div class="rating">Rating: <span class="rating-value" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'rating', this.innerText)">${film.rating}</span></div>
+              <div class="rating">Rating: <span class="rating-value" contenteditable="${devMode || rateMode}" onblur="updateField(${film.originalIndex}, 'rating', this.innerText)">${film.rating}</span></div>
               <div class="img-url" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'img', this.innerText)">${film.img}</div>
               ${devMode ? `<button onclick="deleteFilm(${film.originalIndex})">🗑️ Verwijder</button>` : ''}
             </div>
@@ -248,36 +260,27 @@
     }
 
     function addFilm() {
-      const title = document.getElementById('new-title').value;
+      const title = document.getElementById('new-title').value.trim();
       const rating = parseFloat(document.getElementById('new-rating').value);
-      const img = document.getElementById('new-img').value;
-      if (title && !isNaN(rating) && img) {
-        films.push({ title, rating, img });
-        renderFilms();
-      }
+      const img = document.getElementById('new-img').value.trim();
+
+      if (!title || isNaN(rating) || !img) return;
+
+      films.push({ title, rating, img });
+      renderFilms('');
     }
 
     function deleteFilm(index) {
-      if (confirm('Weet je zeker dat je deze film wilt verwijderen?')) {
-        films.splice(index, 1);
-        renderFilms();
-      }
+      films.splice(index, 1);
+      renderFilms(document.getElementById('search-input').value.toLowerCase());
     }
 
     function exportData() {
-      const lines = films.map(f => `  { title: "${f.title}", rating: ${f.rating}, img: "${f.img}" },`).join("\n");
-      const output = `[
-${lines}
-]`;
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(output);
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "films.js");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+      console.log(JSON.stringify(films, null, 2));
+      alert("Check de console (F12) voor de geëxporteerde data.");
     }
 
+    // Initial render
     renderFilms();
   </script>
 </body>
