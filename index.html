@@ -27,7 +27,7 @@
       margin-bottom: 1rem;
     }
 
-    input[type="text"], input[type="number"] {
+    input[type="text"] {
       padding: 0.5rem;
       width: 60%;
       border-radius: 6px;
@@ -56,30 +56,24 @@
       flex-grow: 1;
     }
 
-    /* Blue highlight only in devmode */
-    body.devmode .film-title[contenteditable],
-    body.devmode .rating-value[contenteditable],
-    body.devmode .rank-number {
-      background-color: #d0e4ff;
-      border-radius: 4px;
-      padding: 2px 4px;
-    }
-
-    /* No highlight in hanmode or normal */
-    body.hanmode .film-title[contenteditable],
-    body.hanmode .rating-value[contenteditable],
-    body.hanmode .rank-number,
-    body:not(.devmode):not(.hanmode) .film-title[contenteditable],
-    body:not(.devmode):not(.hanmode) .rating-value[contenteditable],
-    body:not(.devmode):not(.hanmode) .rank-number {
+    /* Make editable backgrounds invisible by default */
+    .film-title[contenteditable],
+    .rating-value[contenteditable] {
       background-color: transparent;
       padding: 0;
+      border-radius: 0;
+      outline: none;
+      cursor: default;
     }
 
-    .film-title[contenteditable],
-    .rating-value[contenteditable],
-    .img-url[contenteditable] {
+    /* Show editable backgrounds only in devmode */
+    .devmode .film-title[contenteditable],
+    .devmode .rating-value[contenteditable] {
+      background-color: #eef;
+      padding: 2px 4px;
+      border-radius: 4px;
       cursor: text;
+      outline: auto;
     }
 
     .film-title {
@@ -96,13 +90,14 @@
       font-size: 1.5rem;
       margin-right: 1rem;
       color: #444;
-      min-width: 35px;
-      text-align: center;
+    }
+
+    input, button {
+      padding: 0.5rem;
+      margin: 0.2rem;
     }
 
     button {
-      padding: 0.5rem 1rem;
-      margin: 0.2rem;
       background: #007bff;
       color: white;
       border: none;
@@ -114,27 +109,21 @@
       background: #0056b3;
     }
 
-    .dev-tools, #add-movie-han {
+    .dev-tools {
       display: none;
       flex-direction: column;
       align-items: center;
-      margin-top: 1rem;
     }
 
     .img-url {
       display: none;
     }
 
-    /* Show img-url only in devmode */
-    body.devmode .img-url {
+    .devmode .img-url {
       display: block;
       color: #555;
       font-size: 0.9rem;
       margin-top: 4px;
-      background-color: #eef;
-      padding: 2px 4px;
-      border-radius: 4px;
-      cursor: text;
     }
   </style>
 </head>
@@ -149,8 +138,7 @@
 
     <div id="film-list"></div>
 
-    <!-- Dev mode add movie inputs -->
-    <div class="dev-tools" id="add-movie-dev">
+    <div class="dev-tools" id="dev-tools">
       <h2>Developer Mode</h2>
       <input id="new-title" placeholder="Filmtitel" />
       <input id="new-rating" type="number" min="1" max="10" step="0.1" placeholder="Rating" />
@@ -159,24 +147,12 @@
       <button onclick="exportData()">Exporteren</button>
     </div>
 
-    <!-- Han mode add movie inputs (no poster) -->
-    <div id="add-movie-han">
-      <h2>Han Mode</h2>
-      <input id="han-title" placeholder="Filmtitel" />
-      <input id="han-rating" type="number" min="1" max="10" step="0.1" placeholder="Rating" />
-      <button onclick="addHanMovie()">Toevoegen (zonder poster)</button>
-      <button onclick="exportData()">Exporteren</button>
-    </div>
-
     <h2>Gemaakt door Tex voor Papa</h2>
   </div>
 
   <script>
-    let devmode = false;
-    let hanmode = false;
-
+    let devMode = false;
     let films = [
- [
   { title: "The Shawshank Redemption", rating: 9.3, img: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg" },
   { title: "The Godfather", rating: 9.2, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg" },
   { title: "The Dark Knight", rating: 9, img: "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg" },
@@ -224,34 +200,16 @@
   { title: "8 Mile", rating: 6, img: "https://upload.wikimedia.org/wikipedia/en/8/8b/Eight_mile_ver2.jpg" },
   { title: "Top Gun", rating: 6, img: "https://m.media-amazon.com/images/I/71JXK7v7pvL.jpg" },
   { title: "Papillon", rating: 6, img: "https://m.media-amazon.com/images/M/MV5BN2RkNTU2YmUtNGJmNy00YTAzLWE2MjMtOTVkYWU5NzY3M2ViXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-]
     ];
 
     function handleSearch() {
       const value = document.getElementById('search-input').value.toLowerCase();
       if (value === 'devmode') {
-        devmode = true;
-        hanmode = false;
-      } else if (value === 'hanmode') {
-        devmode = false;
-        hanmode = true;
-      } else {
-        devmode = false;
-        hanmode = false;
+        devMode = true;
+        document.getElementById('dev-tools').style.display = 'flex';
+        document.body.classList.add('devmode');
       }
-      updateBodyClass();
-      toggleAddMovieInputs();
       renderFilms(value);
-    }
-
-    function updateBodyClass() {
-      document.body.classList.toggle('devmode', devmode);
-      document.body.classList.toggle('hanmode', hanmode);
-    }
-
-    function toggleAddMovieInputs() {
-      document.getElementById('add-movie-dev').style.display = devmode ? 'flex' : 'none';
-      document.getElementById('add-movie-han').style.display = hanmode ? 'flex' : 'none';
     }
 
     function renderFilms(search = '') {
@@ -263,22 +221,63 @@
         .sort((a, b) => b.rating - a.rating);
 
       filtered.forEach((film, displayIndex) => {
-        const i = film.originalIndex;
-        const rank = displayIndex + 1;
-        const editable = (devmode || hanmode) ? "true" : "false";
-
-        // Poster URL shown ONLY in devmode
-        const imgUrlHtml = devmode
-          ? `<div class="img-url" contenteditable="true" onblur="updateField(${i}, 'img', this.innerText)">${film.img}</div>`
-          : '';
-
-        // Delete button only in devmode
-        const deleteButton = devmode
-          ? `<button onclick="deleteFilm(${i})">🗑️ Verwijder</button>`
-          : '';
-
         container.innerHTML += `
           <div class="film">
-            <div class="rank-number">#${rank}</div>
-            <img src="${film.img || 'https://via.placeholder.com/80x120?text=No+Image'}" alt="${film.title}" />
-            <div class="film
+            <div class="rank-number">#${displayIndex + 1}</div>
+            <img src="${film.img}" alt="${film.title}" />
+            <div class="film-details">
+              <div class="film-title" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'title', this.innerText)">${film.title}</div>
+              <div class="rating">Rating: <span class="rating-value" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'rating', this.innerText)">${film.rating}</span></div>
+              <div class="img-url" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'img', this.innerText)">${film.img}</div>
+              ${devMode ? `<button onclick="deleteFilm(${film.originalIndex})">🗑️ Verwijder</button>` : ''}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function updateField(index, field, value) {
+      if (field === 'rating') {
+        value = parseFloat(value);
+        if (isNaN(value)) return;
+      }
+      films[index][field] = value;
+      renderFilms(document.getElementById('search-input').value.toLowerCase());
+    }
+
+    function addFilm() {
+      const title = document.getElementById('new-title').value;
+      const rating = parseFloat(document.getElementById('new-rating').value);
+      const img = document.getElementById('new-img').value;
+      if (title && !isNaN(rating) && img) {
+        films.push({ title, rating, img });
+        renderFilms();
+      }
+    }
+
+    function deleteFilm(index) {
+      // Using UI confirm is disallowed, replaced with inline UI confirm modal alternative if needed.
+      if (confirm('Weet je zeker dat je deze film wilt verwijderen?')) {
+        films.splice(index, 1);
+        renderFilms();
+      }
+    }
+
+    function exportData() {
+      const lines = films.map(f => `  { title: "${f.title}", rating: ${f.rating}, img: "${f.img}" },`).join("\n");
+      const output = `[
+${lines}
+]`;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(output);
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "films.js");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    renderFilms();
+  </script>
+</body>
+</html>
