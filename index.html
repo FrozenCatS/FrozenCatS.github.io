@@ -102,6 +102,17 @@
       flex-direction: column;
       align-items: center;
     }
+
+    .img-url {
+      display: none;
+    }
+
+    .devmode .img-url {
+      display: block;
+      color: #555;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -170,6 +181,7 @@
   { title: "The Rush", rating: 7.7, img: "https://upload.wikimedia.org/wikipedia/en/2/25/Rush2013Poster.jpg" },
   { title: "Into the Wild", rating: 8.1, img: "https://upload.wikimedia.org/wikipedia/en/8/8d/Into_the_Wild_%28film%29.jpg" },
   { title: "Donnie Darko", rating: 8.0, img: "https://www.impawards.com/2001/donnie_darko_ver1.html" }
+
     ];
 
     function handleSearch() {
@@ -177,6 +189,7 @@
       if (value === 'devmode') {
         devMode = true;
         document.getElementById('dev-tools').style.display = 'flex';
+        document.body.classList.add('devmode');
       }
       renderFilms(value);
     }
@@ -198,9 +211,7 @@
               <div class="film-title" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'title', this.innerText)">${film.title}</div>
               <div class="rating">Rating: <span class="rating-value" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'rating', this.innerText)">${film.rating}</span></div>
               <div class="img-url" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'img', this.innerText)">${film.img}</div>
-              ${devMode ? `
-                <button onclick="deleteFilm(${film.originalIndex})">🗑️ Verwijder</button>
-              ` : ''}
+              ${devMode ? `<button onclick="deleteFilm(${film.originalIndex})">🗑️ Verwijder</button>` : ''}
             </div>
           </div>
         `;
@@ -234,10 +245,14 @@
     }
 
     function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(films, null, 2));
+      const lines = films.map(f => `  { title: "${f.title}", rating: ${f.rating}, img: "${f.img}" },`).join("\n");
+      const output = `[
+${lines}
+]`;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(output);
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "films.json");
+      downloadAnchor.setAttribute("download", "films.js");
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
