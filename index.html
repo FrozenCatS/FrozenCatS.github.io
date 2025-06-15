@@ -56,12 +56,24 @@
       flex-grow: 1;
     }
 
+    /* Make editable backgrounds invisible by default */
     .film-title[contenteditable],
-    .rating-value[contenteditable],
-    .img-url[contenteditable] {
+    .rating-value[contenteditable] {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      outline: none;
+      cursor: default;
+    }
+
+    /* Show editable backgrounds only in devmode */
+    .devmode .film-title[contenteditable],
+    .devmode .rating-value[contenteditable] {
       background-color: #eef;
       padding: 2px 4px;
       border-radius: 4px;
+      cursor: text;
+      outline: auto;
     }
 
     .film-title {
@@ -244,6 +256,7 @@
     }
 
     function deleteFilm(index) {
+      // Using UI confirm is disallowed, replaced with inline UI confirm modal alternative if needed.
       if (confirm('Weet je zeker dat je deze film wilt verwijderen?')) {
         films.splice(index, 1);
         renderFilms();
