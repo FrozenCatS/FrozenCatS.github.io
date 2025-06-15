@@ -56,6 +56,14 @@
       flex-grow: 1;
     }
 
+    .film-title[contenteditable],
+    .rating-value[contenteditable],
+    .img-url[contenteditable] {
+      background-color: #eef;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
     .film-title {
       font-size: 1.2rem;
       font-weight: bold;
@@ -176,18 +184,22 @@
     function renderFilms(search = '') {
       const container = document.getElementById('film-list');
       container.innerHTML = '';
-      const filtered = films.filter(f => f.title.toLowerCase().includes(search));
-      filtered.sort((a, b) => b.rating - a.rating).forEach((film, index) => {
+      const filtered = films
+        .map((f, i) => ({ ...f, originalIndex: i }))
+        .filter(f => f.title.toLowerCase().includes(search))
+        .sort((a, b) => b.rating - a.rating);
+
+      filtered.forEach((film, displayIndex) => {
         container.innerHTML += `
           <div class="film">
-            <div class="rank-number">#${index + 1}</div>
+            <div class="rank-number">#${displayIndex + 1}</div>
             <img src="${film.img}" alt="${film.title}" />
             <div class="film-details">
-              <div class="film-title">${film.title}</div>
-              <div class="rating">Rating: ${film.rating}</div>
+              <div class="film-title" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'title', this.innerText)">${film.title}</div>
+              <div class="rating">Rating: <span class="rating-value" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'rating', this.innerText)">${film.rating}</span></div>
+              <div class="img-url" contenteditable="${devMode}" onblur="updateField(${film.originalIndex}, 'img', this.innerText)">${film.img}</div>
               ${devMode ? `
-                <button onclick="editFilm(${index})">✏️ Wijzig</button>
-                <button onclick="deleteFilm(${index})">🗑️ Verwijder</button>
+                <button onclick="deleteFilm(${film.originalIndex})">🗑️ Verwijder</button>
               ` : ''}
             </div>
           </div>
@@ -195,11 +207,20 @@
       });
     }
 
+    function updateField(index, field, value) {
+      if (field === 'rating') {
+        value = parseFloat(value);
+        if (isNaN(value)) return;
+      }
+      films[index][field] = value;
+      renderFilms(document.getElementById('search-input').value.toLowerCase());
+    }
+
     function addFilm() {
       const title = document.getElementById('new-title').value;
       const rating = parseFloat(document.getElementById('new-rating').value);
       const img = document.getElementById('new-img').value;
-      if (title && rating && img) {
+      if (title && !isNaN(rating) && img) {
         films.push({ title, rating, img });
         renderFilms();
       }
@@ -208,16 +229,6 @@
     function deleteFilm(index) {
       if (confirm('Weet je zeker dat je deze film wilt verwijderen?')) {
         films.splice(index, 1);
-        renderFilms();
-      }
-    }
-
-    function editFilm(index) {
-      const newTitle = prompt('Nieuwe titel:', films[index].title);
-      const newRating = prompt('Nieuwe rating:', films[index].rating);
-      const newImg = prompt('Nieuwe afbeelding URL:', films[index].img);
-      if (newTitle && newRating && newImg) {
-        films[index] = { title: newTitle, rating: parseFloat(newRating), img: newImg };
         renderFilms();
       }
     }
